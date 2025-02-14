@@ -34,6 +34,11 @@ from vllm.multimodal import MULTIMODAL_REGISTRY
 from vllm.multimodal.utils import cached_get_tokenizer
 from vllm.sequence import IntermediateTensors, SequenceData
 
+try:
+    from xformers import ops as xops
+    USE_XFORMERS_OPS = True
+except ImportError:
+    USE_XFORMERS_OPS = False
 
 ##### imports below this line are proposed as a candiate to replace the original methods. they are not confirmed and need to be tested
 
@@ -54,23 +59,22 @@ SampleOutput = Union[SampleEncoderDecoderOutput, SampleDecoderOnlyOutput]
 # from vllm.multimodal import MultiModalKwargs
 # we don't have an explicit multimodalkwargs class, we pass everything into the configs
 
+# from .interfaces import SupportsMultiModal, SupportsPP
+# these two classes seem to be required in the mainline vllm, but not in the Neuron fork
 
-#### imports do not fail from the top of the file to this line ########## 
+# from .utils import init_vllm_registered_model
+# we can initialize it using the fork
 
+# from .utils import maybe_prefix
+# this is used to initialize the LM through vllm, we can use our syntax for that
 
-from .interfaces import SupportsMultiModal, SupportsPP
-from .utils import (init_vllm_registered_model, maybe_prefix,
-                    merge_multimodal_embeddings)
-from .vision import VisionEncoderInfo, resolve_visual_encoder_outputs
-
-try:
-    from xformers import ops as xops
-    USE_XFORMERS_OPS = True
-except ImportError:
-    USE_XFORMERS_OPS = False
+# from .vision import VisionEncoderInfo
+# we can handle metadata for the vision encoder through NeuronConfig etc
 
 ###### imports below this line I do not see an easy way to replace ######## 
+from .vision import resolve_visual_encoder_outputs 
 from vllm.model_executor.layers.activation import get_act_and_mul_fn
 from vllm.multimodal.inputs import NestedTensors, PlaceholderRange
 from vllm.multimodal.utils import consecutive_placeholder_ranges
+from .utils import merge_multimodal_embeddings
 
