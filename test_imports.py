@@ -47,7 +47,6 @@ from neuronx_distributed_inference.models.config import (
     InferenceConfig,
     MultimodalVisionNeuronConfig)
 
-
 # from vllm.inputs import DecoderOnlyInputs, DummyData, token_inputs
 from transformers.generation import SampleDecoderOnlyOutput, SampleEncoderDecoderOutput
 SampleOutput = Union[SampleEncoderDecoderOutput, SampleDecoderOnlyOutput]
@@ -71,10 +70,12 @@ SampleOutput = Union[SampleEncoderDecoderOutput, SampleDecoderOnlyOutput]
 # from .vision import VisionEncoderInfo
 # we can handle metadata for the vision encoder through NeuronConfig etc
 
-###### imports below this line I do not see an easy way to replace ######## 
-from .vision import resolve_visual_encoder_outputs 
-from vllm.model_executor.layers.activation import get_act_and_mul_fn
-from vllm.multimodal.inputs import NestedTensors, PlaceholderRange
-from vllm.multimodal.utils import consecutive_placeholder_ranges
-from .utils import merge_multimodal_embeddings
+#### the imports below this line are used for the non-critical HF modeling path
+# from .vision import resolve_visual_encoder_outputs 
+# from vllm.model_executor.layers.activation import get_act_and_mul_fn
 
+###### imports below this line I do not see an easy way to replace ######## 
+
+from .utils import merge_multimodal_embeddings
+from vllm.multimodal.utils import consecutive_placeholder_ranges
+from vllm.multimodal.inputs import PlaceholderRange, NestedTensors
